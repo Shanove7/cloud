@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>API Docs</title>
+<style>
+body {
+  font-family: Arial;
+  background: white;
+  color: black;
+  padding: 40px;
+}
+code {
+  background: #eee;
+  padding: 5px;
+  display: block;
+}
+</style>
+</head>
+<body>
+<h1>Cloud File API</h1>
+
+<h3>Upload File</h3>
+<code>
+POST /api/upload
+Form-data: file
+</code>
+
+<h4>Response</h4>
+<code>
+{
+  "status": true,
+  "url": "https://domain.com/api/file/ID",
+  "id": "ID"
+}
+</code>
+
+<h3>Get File</h3>
+<code>
+GET /api/file/{id}
+</code>
+
+</body>
+</html>
