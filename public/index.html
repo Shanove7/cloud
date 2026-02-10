@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Cloud File</title>
+<style>
+body {
+  font-family: Arial;
+  background: #fff;
+  color: #111;
+  text-align: center;
+  padding: 50px;
+}
+.container {
+  max-width: 500px;
+  margin: auto;
+}
+input, button {
+  padding: 12px;
+  margin: 10px;
+  width: 100%;
+}
+button {
+  background: black;
+  color: white;
+  border: none;
+}
+a {
+  color: black;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Cloud File</h1>
+  <form id="uploadForm">
+    <input type="file" name="file" required />
+    <button type="submit">Upload</button>
+  </form>
+  <p id="result"></p>
+  <p><a href="/docs.html">API Docs</a></p>
+</div>
+
+<script>
+document.getElementById("uploadForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const form = new FormData(e.target);
+
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: form
+  });
+
+  const data = await res.json();
+  document.getElementById("result").innerHTML =
+    `<a href="${data.url}" target="_blank">${data.url}</a>`;
+};
+</script>
+</body>
+</html>
