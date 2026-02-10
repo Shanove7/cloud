@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<style>
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  margin: 0;
+}
+.header {
+  background: white;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+}
+.container {
+  padding: 30px;
+}
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+input, button {
+  padding: 10px;
+  margin: 5px;
+}
+button {
+  background: black;
+  color: white;
+  border: none;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+td, th {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+</style>
+</head>
+<body>
+
+<div class="header">CloudFile Admin</div>
+
+<div class="container">
+
+<div class="card" id="loginBox">
+  <h3>Login</h3>
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="card" id="dashboard" style="display:none">
+  <h3>Files</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Size</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="files"></tbody>
+  </table>
+</div>
+
+</div>
+
+<script>
+async function login() {
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+
+  const res = await fetch("/api/admin-login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user, pass })
+  });
+
+  const data = await res.json();
+
+  if (data.status) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    loadFiles();
+  } else {
+    alert("Login gagal");
+  }
+}
+
+async function loadFiles() {
+  const res = await fetch("/api/admin-files");
+  const files = await res.json();
+
+  const tbody = document.getElementById("files");
+  tbody.innerHTML = "";
+
+  files.forEach(f => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${f.name}</td>
+        <td>${(f.size/1024).toFixed(2)} KB</td>
+        <td>
+          <button onclick="del('${f._id}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+async function del(id) {
+  if (!confirm("Hapus file ini?")) return;
+
+  await fetch("/api/admin-delete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id })
+  });
+
+  loadFiles();
+}
+</script>
+
+</body>
+</html>
